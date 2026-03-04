@@ -1,0 +1,122 @@
+version: 2.1
+
+orbs:
+  terraform: circleci/terraform@3.2.1
+
+executors:
+  terraform:
+    docker:
+      - image: hashicorp/terraform:1.14.5 # ensure this version is in sync with Providers.tf
+
+jobs:
+  validate:
+    executor: terraform
+    steps:
+      - checkout
+      - run:
+          name: Terraform Format Check
+          command: terraform fmt -recursive -check
+      - run:
+          name: Initialize Dev
+          command: |
+            cd environments/dev
+            terraform init -backend=false -input=false
+      - run:
+          name: Validate Dev
+          command: |
+            cd environments/dev
+            terraform validate
+      - run:
+          name: Validate Prod
+          command: |
+            if [ -f environments/prod/main.tf ]; then
+              cd environments/prod
+              terraform init -backend=false -input=false
+              terraform validate
+            fi
+
+  plan:
+    parameters:
+      environment:
+        type: string
+    executor: terraform
+    steps:
+      - checkout
+      - run:
+          name: Terraform Plan << parameters.environment >>
+          command: |
+            cd environments/<< parameters.environment >>
+            terraform init -input=false
+            terraform plan -input=false -out=tfplan-<< parameters.environment >>
+      - persist_to_workspace:
+          root: .
+          paths:
+            - environments/<< parameters.environment >>/tfplan-<< parameters.environment >>
+
+  apply:
+    parameters:
+      environment:
+        type: string
+    executor: terraform
+    steps:
+      - checkout
+      - attach_workspace:
+          at: .
+      - run:
+          name: Terraform Apply << parameters.environment >>
+          command: |
+            cd environments/<< parameters.environment >>
+            terraform init -input=false
+            terraform apply -input=false -auto-approve tfplan-<< parameters.environment >>
+
+workflows:
+  version: 2
+  build-deploy:
+    jobs:
+      - validate
+      - plan:
+          name: plan-dev
+          environment: dev
+          requires:
+            - validate
+          filters:
+            branches:
+              ignore: main
+      - plan:
+          name: plan-prod
+          environment: prod
+          requires:
+            - validate
+          filters:
+            branches:
+              only: main
+      - hold-dev:
+          type: approval
+          requires:
+            - plan-dev
+          filters:
+            branches:
+              only: /dev-.*/
+      - apply:
+          name: apply-dev
+          environment: dev
+          requires:
+            - hold-dev
+          filters:
+            branches:
+              only: /dev-.*/ # apply dev on branches starting with dev-
+      - hold-prod:
+          type: approval
+          requires:
+            - plan-prod
+          filters:
+            branches:
+              only: main
+      - apply:
+          name: apply-prod
+          environment: prod
+          requires:
+            - hold-prod
+          filters:
+            branches:
+              only: main
