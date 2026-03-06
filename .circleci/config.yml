@@ -105,6 +105,16 @@ workflows:
             branches:
               only: main
 
+      - terraform/destroy:
+          name: destroy-dev
+          context: terraform
+          path: environments/dev
+          filters:
+            branches:
+              only: main
+          requires:
+            - hold-prod
+
       - terraform/apply:
           name: apply-prod
           attach-workspace: true
@@ -114,4 +124,4 @@ workflows:
             branches:
               only: main
           requires:
-            - plan-prod
+            - destroy-dev
