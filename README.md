@@ -1,5 +1,7 @@
 # This demo project was mostly setup to review CircleCI usage with Terraform.
 
+> After every change or edit, run the `terraform_fmt_validate.py` before pushing your change.
+
 This demo-project provides a modular approach to deploying infrastructure on AWS using Terraform. It includes configurations for setting up a Virtual Private Cloud (VPC), EC2 servers, databases, and other essential components.
 
 The project is structured to support multiple environments (e.g., development and production) while maintaining reusable components through custom modules.

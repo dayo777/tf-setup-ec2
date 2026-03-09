@@ -28,3 +28,23 @@ variable "enable_ipv6" {
   type        = string
   description = "Whether to enable IPv6 for this VPC"
 }
+
+variable "azs" {
+  type        = list(string)
+  description = "These are the availability zones used in this VPC region."
+}
+
+variable "public_subnets" {
+  type        = list(string)
+  description = "public subnets available inside this vpc region"
+}
+
+variable "private_subnets" {
+  type        = list(string)
+  description = "private subnets available in this vpc region"
+}
+
+variable "database_subnets" {
+  type        = list(string)
+  description = "database subnets for this environment"
+}

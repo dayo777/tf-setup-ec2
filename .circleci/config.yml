@@ -24,13 +24,6 @@ workflows:
           path: environments/dev
           requires:
             - fmt
-          # backend_config:
-          # backend_config_file: 
-          #   - bucket: demo-state-files
-          #     key: us-east-1/dev/terraform.tfstate
-          #     region: us-east-1
-          #     dynamodb_table: terraform-locks
-          #     encrypt: true
           filters:
             branches:
               only: dev
@@ -41,13 +34,6 @@ workflows:
           context: terraform
           persist-workspace: true
           path: environments/dev
-          # backend_config_file: 
-          # backend_config:
-          #   - bucket: demo-state-files
-          #     key: us-east-1/dev/terraform.tfstate
-          #     region: us-east-1
-          #     dynamodb_table: terraform-locks
-          #     encrypt: true
           requires:
             - validate-dev
           filters:

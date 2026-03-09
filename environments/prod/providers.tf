@@ -11,12 +11,13 @@ terraform {
 
 provider "aws" {
   region = var.region
-  alias  = "demo-useast1"
+  alias  = "prod-useast1"
 
   default_tags {
     tags = {
       Environment = var.environment
       Project     = var.project_name
+      Terraform   = true
     }
   }
 }

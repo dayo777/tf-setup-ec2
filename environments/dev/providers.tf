@@ -17,6 +17,7 @@ provider "aws" {
     tags = {
       Environment = var.environment
       Project     = var.project_name
+      Terraform   = true
     }
   }
 }
