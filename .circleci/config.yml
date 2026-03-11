@@ -103,15 +103,15 @@ workflows:
             branches:
               only: main
 
-      - terraform/destroy:
-          name: destroy-dev
-          context: terraform
-          path: environments/dev
-          filters:
-            branches:
-              only: main
-          requires:
-            - hold-prod
+#      - terraform/destroy:
+#          name: destroy-dev
+#          context: terraform
+#          path: environments/dev
+#          filters:
+#            branches:
+#              only: main
+#          requires:
+#            - hold-prod
 
       - terraform/apply:
           name: apply-prod
@@ -122,4 +122,4 @@ workflows:
             branches:
               only: main
           requires:
-            - destroy-dev
+            - hold-prod
