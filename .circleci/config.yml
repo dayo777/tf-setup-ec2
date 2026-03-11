@@ -17,6 +17,7 @@ workflows:
           recursive: true
 
       # dev jobs
+      
       - terraform/validate:
           name: validate-dev
           checkout: true
@@ -27,7 +28,18 @@ workflows:
           filters:
             branches:
               only: dev
-      
+
+      - terraform/destroy:
+          name: destroy-dev-initial
+          checkout: true
+          context: terraform
+          path: environments/dev
+          requires:
+            - validate-dev
+          filters:
+            branches:
+              only: dev
+
       - terraform/plan:
           name: plan-dev
           checkout: true
@@ -35,7 +47,7 @@ workflows:
           persist-workspace: true
           path: environments/dev
           requires:
-            - validate-dev
+            - destroy-dev-initial
           filters:
             branches:
               only: dev
@@ -57,7 +69,7 @@ workflows:
             branches:
               only: dev
           requires:
-            - plan-dev
+            - hold-dev
 
 # prod jobs
       - terraform/validate:
