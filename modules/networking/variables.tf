@@ -9,6 +9,26 @@ variable "cidr" {
 }
 
 variable "enable_ipv6" {
-  type        = string
+  type        = bool
   description = "Whether to enable IPv6 for this VPC"
+}
+
+variable "azs" {
+  type        = list(string)
+  description = "These are the availability zones for this VPC"
+}
+
+variable "private_subnets" {
+  type        = list(string)
+  description = "the private subnets in the VPC"
+}
+
+variable "public_subnets" {
+  type        = list(string)
+  description = "the public subnets in the VPC"
+}
+
+variable "database_subnets" {
+  type        = list(string)
+  description = "cidr blocks for database subnets in the vpc"
 }
