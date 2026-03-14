@@ -13,11 +13,10 @@ workflows:
           name: fmt
           checkout: true
           context: terraform
-          path: environments/dev
+          path: .
           recursive: true
 
       # dev jobs
-      
       - terraform/validate:
           name: validate-dev
           checkout: true
@@ -103,15 +102,15 @@ workflows:
             branches:
               only: main
 
-      - terraform/destroy:
-          name: destroy-dev
-          context: terraform
-          path: environments/dev
-          filters:
-            branches:
-              only: main
-          requires:
-            - hold-prod
+#      - terraform/destroy:
+#          name: destroy-dev
+#          context: terraform
+#          path: environments/dev
+#          filters:
+#            branches:
+#              only: main
+#          requires:
+#            - hold-prod
 
       - terraform/apply:
           name: apply-prod
@@ -122,4 +121,4 @@ workflows:
             branches:
               only: main
           requires:
-            - destroy-dev
+            - hold-prod
