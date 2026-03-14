@@ -13,11 +13,10 @@ workflows:
           name: fmt
           checkout: true
           context: terraform
-          path: environments/dev
+          path: .
           recursive: true
 
       # dev jobs
-      
       - terraform/validate:
           name: validate-dev
           checkout: true
